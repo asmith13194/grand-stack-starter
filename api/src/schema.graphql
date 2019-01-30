@@ -1,24 +1,209 @@
 type User {
   id: ID!
-  name: String
+  name: String!
+  first_name: String
+  last_name: String
+  last: String
+  email: String
+  username: String
+  password: String
+  phone: String
+  created: Date
+  updated: Date
+  dob: Date
+  bids: [Bid]
+  street: String
+  city: City @relation(name: "IN_CITY", direction: "OUT")
+  state: State @relation(name: "IN_State", direction: "OUT")
+  country: Country @relation(name: "IN_COUNTRY", direction: "OUT")
+  avatar: Avatar @relation(name: "UPLOADED_IMAGE", direction: "OUT")
   friends: [User] @relation(name: "FRIENDS", direction: "BOTH")
+  images: [Image] @relation(name: "UPLOADED_IMAGE", direction: "OUT")
   reviews: [Review] @relation(name: "WROTE", direction: "OUT")
-  avgStars: Float
-    @cypher(
-      statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN toFloat(avg(r.stars))"
-    )
-  numReviews: Int
-    @cypher(statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN COUNT(r)")
+  lots: [Lot] @relation(name: "POSTED_LOT", direction: "OUT")
+  # starred_lots: [Lot]
+  # viewed_lots: [Lot]
+  # views: [Lot] @relation(name: "VIEWED", direction: "OUT")
+  # avgStars: Float
+  #   @cypher(
+  #     statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN toFloat(avg(r.stars))"
+  #   )
+  # numReviews: Int
+  #   @cypher(statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN COUNT(r)")
 }
 
-type Business {
+type Lot {
+  id: ID
+  name: String
+  text: String
+  created: Date
+  updated: Date
+  price: Int
+  reserve: Int
+  qty: Int
+  increment: Int
+  status: String
+  images: [Image]
+  bids: [Bid]
+  thumbnail: Thumbnail @relation(name: "UPLOADED_THUMBNAIL", direction: "OUT")
+  user: User @relation(name: "POSTED_LOT", direction: "IN")
+  category: Category @relation(name: "CATEGORY", direction: "OUT")
+  size: Size @relation(name: "SIZE", direction: "OUT")
+  grade: Grade @relation(name: "GRADE", direction: "OUT")
+  height: Height @relation(name: "HEIGHT", direction: "OUT")
+  gender: Gender @relation(name: "GENDER", direction: "OUT")
+  type: Type @relation(name: "TYPE", direction: "OUT")
+  specials: [Special] @relation(name: "SPECIAL", direction: "OUT")
+  styles: [Style] @relation(name: "STYLE", direction: "OUT")
+  themes: [Theme] @relation(name: "THEME", direction: "OUT")
+  # stars: Int
+  #   @cypher(statement: "MATCH (this)-[:STARRED]->(r:User) RETURN COUNT(r)")
+  # views: [User]
+  #   @cypher(statement: "MATCH (this)-[:VIEWED]->(r:User) RETURN COUNT(User)")
+}
+
+type Bid @relation(name: "BID") {
+  id: ID!
+  from: User
+  to: Lot
+  created: Date
+  updated: Date
+  bid: Int
+}
+
+type Star @relation(name: "STARRED") {
+  id: ID!
+  from: User
+  to: Lot
+  created: Date
+  updated: Date
+}
+
+type Avatar {
+  id: ID!
+  created: Date
+  updated: Date
+  url: String
+  user: User @relation(name: "UPLOADED_AVATAR", direction: "IN")
+}
+
+type Thumbnail {
+  id: ID!
+  created: Date
+  updated: Date
+  url: String
+  user: User @relation(name: "UPLOADED_THUMBNAIL", direction: "IN")
+}
+
+type Image @relation(name: "UPLOADED_IMAGE") {
+  id: ID!
+  from: User
+  to: Lot
+  created: Date
+  updated: Date
+  url: String
+}
+
+type City {
   id: ID!
   name: String
-  address: String
-  city: String
-  state: String
-  reviews: [Review] @relation(name: "REVIEWS", direction: "IN")
-  categories: [Category] @relation(name: "IN_CATEGORY", direction: "OUT")
+  state: State @relation(name: "IN_STATE", direction: "OUT")
+  country: Country @relation(name: "IN_COUNTRY", direction: "OUT")
+  users: [User] @relation(name: "IN_CITY", direction: "IN")
+}
+
+type State {
+  id: ID!
+  name: String
+  cities: [City] @relation(name: "IN_STATE", direction: "IN")
+  country: Country @relation(name: "IN_COUNTRY", direction: "OUT")
+  users: [User] @relation(name: "IN_STATE", direction: "IN")
+}
+
+type Country {
+  id: ID!
+  name: String
+  states: [State]
+  users: [User] @relation(name: "IN_COUNTRY", direction: "IN")
+}
+
+type Size {
+  id: ID!
+  name: String
+  lots: [Lot] @relation(name: "SIZE", direction: "IN")
+  category: Category @relation(name: "SIZE", direction: "IN")
+}
+
+type Gender {
+  id: ID!
+  name: String
+  lots: [Lot] @relation(name: "GENDER", direction: "IN")
+  category: Category @relation(name: "GENDER", direction: "IN")
+}
+
+type Type {
+  id: ID!
+  name: String
+  lots: [Lot] @relation(name: "TYPE", direction: "IN")
+  category: Category @relation(name: "TYPE", direction: "IN")
+}
+
+type Height {
+  id: ID!
+  name: String
+  lots: [Lot] @relation(name: "HEIGHT", direction: "IN")
+  category: Category @relation(name: "HEIGHT", direction: "IN")
+}
+
+type Grade {
+  id: ID!
+  name: String
+  lots: [Lot] @relation(name: "GRADE", direction: "IN")
+  category: Category @relation(name: "GRADE", direction: "IN")
+
+}
+
+type Special {
+  id: ID!
+  name: String
+  lots: [Lot] @relation(name: "SPECIAL", direction: "IN")
+  category: Category @relation(name: "SPECIAL", direction: "IN")
+}
+
+type Perc {
+  id: ID!
+  name: String
+  lots: [Lot] @relation(name: "PERC", direction: "IN")
+  category: Category @relation(name: "PERC", direction: "IN")
+}
+
+type Theme {
+  id: ID!
+  name: String
+  lots: [Lot] @relation(name: "THEME", direction: "IN")
+  category: Category @relation(name: "THEME", direction: "IN")
+}
+
+type Style {
+  id: ID!
+  name: String
+  lots: [Lot] @relation(name: "STYLE", direction: "IN")
+  category: Category @relation(name: "STYLE", direction: "IN")
+}
+
+type Category {
+  id: ID!
+  name: String
+  lots: [Lot] @relation(name: "LOT", direction: "IN")
+  styles: [Style] @relation(name: "STYLE", direction: "OUT")
+  percs: [Perc] @relation(name: "PERC", direction: "OUT")
+  heights: [Height] @relation(name: "HEIGHT", direction: "OUT")
+  themes: [Theme] @relation(name: "THEME", direction: "OUT")
+  specials: [Special] @relation(name: "SPECIAL", direction: "OUT")
+  grades: [Grade] @relation(name: "GRADE", direction: "OUT")
+  genders: [Gender] @relation(name: "GENDER", direction: "OUT")
+  sizes: [Size] @relation(name: "SIZE", direction: "OUT")
+  type: [Type] @relation(name: "TYPE", direction: "OUT")
 }
 
 type Review {
@@ -26,18 +211,38 @@ type Review {
   stars: Int
   text: String
   date: Date
-  business: Business @relation(name: "REVIEWS", direction: "OUT")
   user: User @relation(name: "WROTE", direction: "IN")
-}
-
-type Category {
-  name: ID!
-  businesses: [Business] @relation(name: "IN_CATEGORY", direction: "IN")
 }
 
 type Query {
   usersBySubstring(substring: String): [User]
     @cypher(
       statement: "MATCH (u:User) WHERE u.name CONTAINS $substring RETURN u"
+    )
+}
+
+type Mutation {
+  addLot(
+    id: ID!
+    category: ID!
+    grade: ID!
+    gender: ID!
+    height: ID!
+    increment: Int
+    name: String
+    perc: ID!
+    price: Int
+    qty: Int
+    reserve: Int
+    size: ID!
+    specials: [ID!]
+    styles: [ID!]
+    themes: [ID!]
+    text: String
+    type: ID!
+    user: ID!
+  ): Lot
+    @cypher(
+      statement: "MATCH (u:User),(c:Category),(t:Type),(g:Grade),(ge:Gender),(h:Height),(p:Perc),(s:Size),(sp:Special),(st:Style),(th:Theme),(t:Type) WHERE u.id = $user AND c.id = $category AND t.id = $type AND g.id = $grade AND ge.id = $gender AND h.id = $height AND p.id = $perc AND s.id = $size AND sp.id IN $specials AND st.id IN $styles AND th.id IN $themes MERGE (l:Lot { id: $id, name: $name, text: $text, price: $price, reserve: $reserve, qty: $qty, increment: $increment, created: timestamp(), updated: timestamp() }) MERGE (l)<-[:POSTED_LOT]-(u) MERGE (c)<-[:CATEGORY]-(l) MERGE (g)<-[:GRADE]-(l) MERGE (ge)<-[:GENDER]-(l) MERGE (h)<-[:HEIGHT]-(l) MERGE (p)<-[:PERC]-(l) MERGE (s)<-[:SIZE]-(l) MERGE (sp)<-[:SPECIAL]-(l) MERGE (st)<-[:STYLE]-(l) MERGE (th)<-[:THEME]-(l) MERGE (t)<-[:TYPE]-(l) RETURN l"
     )
 }

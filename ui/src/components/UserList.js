@@ -1,7 +1,6 @@
 import React from "react";
 import { Query } from "react-apollo";
-import gql from "graphql-tag";
-import "./UserList.css";
+import "../styles/UserList.css";
 import { withStyles } from "@material-ui/core/styles";
 import {
   Table,
@@ -13,6 +12,8 @@ import {
   Paper,
   TableSortLabel
 } from "@material-ui/core";
+
+import { usersPaginateQuery } from "../gql";
 
 const styles = theme => ({
   root: {
@@ -53,20 +54,7 @@ class UserList extends React.Component {
     const { order, orderBy } = this.state;
     return (
       <Query
-        query={gql`
-          query usersPaginateQuery(
-            $first: Int
-            $offset: Int
-            $orderBy: _UserOrdering
-          ) {
-            User(first: $first, offset: $offset, orderBy: $orderBy) {
-              id
-              name
-              avgStars
-              numReviews
-            }
-          }
-        `}
+        query={usersPaginateQuery}
         variables={{
           first: this.state.rowsPerPage,
           offset: this.state.rowsPerPage * this.state.page,
