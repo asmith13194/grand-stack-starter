@@ -12,6 +12,7 @@ import {
   Paper,
   TableSortLabel
 } from "@material-ui/core";
+import Layout from "../views";
 
 import { usersPaginateQuery } from "../gql";
 
@@ -53,101 +54,103 @@ class UserList extends React.Component {
   render() {
     const { order, orderBy } = this.state;
     return (
-      <Query
-        query={usersPaginateQuery}
-        variables={{
-          first: this.state.rowsPerPage,
-          offset: this.state.rowsPerPage * this.state.page,
-          orderBy: this.state.orderBy + "_" + this.state.order
-        }}
-      >
-        {({ loading, error, data }) => {
-          if (loading) return <p>Loading...</p>;
-          if (error) return <p>Error</p>;
+      <Layout>
+        <Query
+          query={usersPaginateQuery}
+          variables={{
+            first: this.state.rowsPerPage,
+            offset: this.state.rowsPerPage * this.state.page,
+            orderBy: this.state.orderBy + "_" + this.state.order
+          }}
+        >
+          {({ loading, error, data }) => {
+            if (loading) return <p>Loading...</p>;
+            if (error) return <p>Error</p>;
 
-          return (
-            <Paper className={this.props.classes.root}>
-              <Table className={this.props.classes.table}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      key="name"
-                      sortDirection={orderBy === "name" ? order : false}
-                    >
-                      <Tooltip
-                        title="Sort"
-                        placement="bottom-start"
-                        enterDelay={300}
+            return (
+              <Paper className={this.props.classes.root}>
+                <Table className={this.props.classes.table}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        key="name"
+                        sortDirection={orderBy === "name" ? order : false}
                       >
-                        <TableSortLabel
-                          active={orderBy === "name"}
-                          direction={order}
-                          onClick={() => this.handleSortRequest("name")}
+                        <Tooltip
+                          title="Sort"
+                          placement="bottom-start"
+                          enterDelay={300}
                         >
-                          Name
-                        </TableSortLabel>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell
-                      key="avgStars"
-                      sortDirection={orderBy === "avgStars" ? order : false}
-                      numeric
-                    >
-                      <Tooltip
-                        title="Sort"
-                        placement="bottom-end"
-                        enterDelay={300}
+                          <TableSortLabel
+                            active={orderBy === "name"}
+                            direction={order}
+                            onClick={() => this.handleSortRequest("name")}
+                          >
+                            Name
+                          </TableSortLabel>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell
+                        key="avgStars"
+                        sortDirection={orderBy === "avgStars" ? order : false}
+                        numeric
                       >
-                        <TableSortLabel
-                          active={orderBy === "avgStars"}
-                          direction={order}
-                          onClick={() => this.handleSortRequest("avgStars")}
+                        <Tooltip
+                          title="Sort"
+                          placement="bottom-end"
+                          enterDelay={300}
                         >
-                          Average Stars
-                        </TableSortLabel>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell
-                      key="numReviews"
-                      sortDirection={orderBy === "numReviews" ? order : false}
-                      numeric
-                    >
-                      <Tooltip
-                        title="Sort"
-                        placement="bottom-start"
-                        enterDelay={300}
+                          <TableSortLabel
+                            active={orderBy === "avgStars"}
+                            direction={order}
+                            onClick={() => this.handleSortRequest("avgStars")}
+                          >
+                            Average Stars
+                          </TableSortLabel>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell
+                        key="numReviews"
+                        sortDirection={orderBy === "numReviews" ? order : false}
+                        numeric
                       >
-                        <TableSortLabel
-                          active={orderBy === "numReviews"}
-                          direction={order}
-                          onClick={() => this.handleSortRequest("numReviews")}
+                        <Tooltip
+                          title="Sort"
+                          placement="bottom-start"
+                          enterDelay={300}
                         >
-                          Number of Reviews
-                        </TableSortLabel>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {data.User.map(n => {
-                    return (
-                      <TableRow key={n.id}>
-                        <TableCell component="th" scope="row">
-                          {n.name}
-                        </TableCell>
-                        <TableCell numeric>
-                          {n.avgStars ? n.avgStars.toFixed(2) : "-"}
-                        </TableCell>
-                        <TableCell numeric>{n.numReviews}</TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </Paper>
-          );
-        }}
-      </Query>
+                          <TableSortLabel
+                            active={orderBy === "numReviews"}
+                            direction={order}
+                            onClick={() => this.handleSortRequest("numReviews")}
+                          >
+                            Number of Reviews
+                          </TableSortLabel>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {data.User.map(n => {
+                      return (
+                        <TableRow key={n.id}>
+                          <TableCell component="th" scope="row">
+                            {n.name}
+                          </TableCell>
+                          <TableCell numeric>
+                            {n.avgStars ? n.avgStars.toFixed(2) : "-"}
+                          </TableCell>
+                          <TableCell numeric>{n.numReviews}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </Paper>
+            );
+          }}
+        </Query>
+      </Layout>
     );
   }
 }

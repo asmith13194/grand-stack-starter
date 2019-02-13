@@ -14,6 +14,7 @@ import {
   Paper,
   TableSortLabel
 } from "@material-ui/core";
+import Layout from "../views";
 
 import { lotsPaginateQuery } from "../gql";
 
@@ -66,99 +67,101 @@ class LotList extends React.Component {
     ];
 
     return (
-      <Query
-        query={lotsPaginateQuery}
-        variables={{
-          first: this.state.rowsPerPage,
-          offset: this.state.rowsPerPage * this.state.page,
-          orderBy: this.state.orderBy + "_" + this.state.order
-        }}
-      >
-        {({ loading, error, data }) => {
-          if (loading) return <p>Loading...</p>;
-          if (error) return <p>Error</p>;
+      <Layout>
+        <Query
+          query={lotsPaginateQuery}
+          variables={{
+            first: this.state.rowsPerPage,
+            offset: this.state.rowsPerPage * this.state.page,
+            orderBy: this.state.orderBy + "_" + this.state.order
+          }}
+        >
+          {({ loading, error, data }) => {
+            if (loading) return <p>Loading...</p>;
+            if (error) return <p>Error</p>;
 
-          return (
-            <Paper className={this.props.classes.root}>
-              <Button
-                variant={"contained"}
-                onClick={() => this.props.history.push(`/l/add`)}
-              >
-                Add Lot
-              </Button>
+            return (
+              <Paper className={this.props.classes.root}>
+                <Button
+                  variant={"contained"}
+                  onClick={() => this.props.history.push(`/l/add`)}
+                >
+                  Add Lot
+                </Button>
 
-              <Table className={this.props.classes.table}>
-                <TableHead>
-                  <TableRow>
-                    {cols.map(col => (
-                      <TableCell
-                        key={col}
-                        sortDirection={orderBy === col ? order : false}
-                      >
-                        <Tooltip
-                          title="Sort"
-                          placement="bottom-start"
-                          enterDelay={300}
+                <Table className={this.props.classes.table}>
+                  <TableHead>
+                    <TableRow>
+                      {cols.map(col => (
+                        <TableCell
+                          key={col}
+                          sortDirection={orderBy === col ? order : false}
                         >
-                          <TableSortLabel
-                            active={orderBy === col}
-                            direction={order}
-                            onClick={() => this.handleSortRequest(col)}
+                          <Tooltip
+                            title="Sort"
+                            placement="bottom-start"
+                            enterDelay={300}
                           >
-                            {col}
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
+                            <TableSortLabel
+                              active={orderBy === col}
+                              direction={order}
+                              onClick={() => this.handleSortRequest(col)}
+                            >
+                              {col}
+                            </TableSortLabel>
+                          </Tooltip>
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
 
-                <TableBody>
-                  {data.Lot.map(n => {
-                    let {
-                      id,
-                      name,
-                      price,
-                      reserve,
-                      qty,
-                      increment,
-                      status
-                    } = n;
+                  <TableBody>
+                    {data.Lot.map(n => {
+                      let {
+                        id,
+                        name,
+                        price,
+                        reserve,
+                        qty,
+                        increment,
+                        status
+                      } = n;
 
-                    let mapData = [
-                      id,
-                      name,
-                      price,
-                      reserve,
-                      qty,
-                      increment,
-                      status
-                    ];
+                      let mapData = [
+                        id,
+                        name,
+                        price,
+                        reserve,
+                        qty,
+                        increment,
+                        status
+                      ];
 
-                    return (
-                      <TableRow
-                        onClick={() =>
-                          this.props.history.push(
-                            `/l/${name.replace(/\s/g, "-")}/${id}`
-                          )
-                        }
-                        hover
-                        key={n.id}
-                      >
-                        {mapData.map((d, i) => (
-                          <TableCell key={i} component="th" scope="row">
-                            {d}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </Paper>
-          );
-        }}
-      </Query>
+                      return (
+                        <TableRow
+                          onClick={() =>
+                            this.props.history.push(
+                              `/l/${name.replace(/\s/g, "-")}/${id}`
+                            )
+                          }
+                          hover
+                          key={n.id}
+                        >
+                          {mapData.map((d, i) => (
+                            <TableCell key={i} component="th" scope="row">
+                              {d}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </Paper>
+            );
+          }}
+        </Query>
+      </Layout>
     );
   }
 }

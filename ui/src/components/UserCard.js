@@ -12,6 +12,7 @@ import {
   Paper,
   TableSortLabel
 } from "@material-ui/core";
+import Layout from "../views";
 
 import { Query } from "react-apollo";
 import { userQuery } from "../gql";
@@ -76,77 +77,79 @@ class UserCard extends React.Component {
     ];
 
     return (
-      <Query
-        query={userQuery}
-        variables={{
-          name
-        }}
-      >
-        {({ loading, error, data }) => {
-          if (loading) return <p>Loading...</p>;
-          if (error) return <p>Error</p>;
+      <Layout>
+        <Query
+          query={userQuery}
+          variables={{
+            name
+          }}
+        >
+          {({ loading, error, data }) => {
+            if (loading) return <p>Loading...</p>;
+            if (error) return <p>Error</p>;
 
-          const mapData = [
-            data.User[0].id,
-            data.User[0].name,
-            data.User[0].last,
-            data.User[0].email,
-            data.User[0].username,
-            data.User[0].phone,
-            data.User[0].dob.formatted,
-            data.User[0].street
-            // data.User[0].state.name,
-            // data.User[0].country.name,
-          ];
+            const mapData = [
+              data.User[0].id,
+              data.User[0].name,
+              data.User[0].last,
+              data.User[0].email,
+              data.User[0].username,
+              data.User[0].phone,
+              data.User[0].dob.formatted,
+              data.User[0].street
+              // data.User[0].state.name,
+              // data.User[0].country.name,
+            ];
 
-          return (
-            <Paper className={this.props.classes.root}>
-              <Table className={this.props.classes.table}>
-                <TableHead>
-                  <TableRow>
-                    {cols.map(col => (
-                      <TableCell
-                        key={col}
-                        sortDirection={orderBy === col ? order : false}
-                      >
-                        <Tooltip
-                          title="Sort"
-                          placement="bottom-start"
-                          enterDelay={300}
+            return (
+              <Paper className={this.props.classes.root}>
+                <Table className={this.props.classes.table}>
+                  <TableHead>
+                    <TableRow>
+                      {cols.map(col => (
+                        <TableCell
+                          key={col}
+                          sortDirection={orderBy === col ? order : false}
                         >
-                          <TableSortLabel
-                            active={orderBy === col}
-                            direction={order}
-                            onClick={() => this.handleSortRequest(col)}
+                          <Tooltip
+                            title="Sort"
+                            placement="bottom-start"
+                            enterDelay={300}
                           >
-                            {col}
-                          </TableSortLabel>
-                        </Tooltip>
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
+                            <TableSortLabel
+                              active={orderBy === col}
+                              direction={order}
+                              onClick={() => this.handleSortRequest(col)}
+                            >
+                              {col}
+                            </TableSortLabel>
+                          </Tooltip>
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
 
-                <TableBody>
-                  <TableRow
-                    onClick={() =>
-                      this.props.history.push(`/u/${data.User[0].name}`)
-                    }
-                    hover
-                    key={data.User.id}
-                  >
-                    {mapData.map((d, i) => (
-                      <TableCell key={i} component="th" scope="row">
-                        {d}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Paper>
-          );
-        }}
-      </Query>
+                  <TableBody>
+                    <TableRow
+                      onClick={() =>
+                        this.props.history.push(`/u/${data.User[0].name}`)
+                      }
+                      hover
+                      key={data.User.id}
+                    >
+                      {mapData.map((d, i) => (
+                        <TableCell key={i} component="th" scope="row">
+                          {d}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Paper>
+            );
+          }}
+        </Query>
+      </Layout>
     );
   }
 }
